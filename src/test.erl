@@ -46,48 +46,12 @@ reverseList([], L2) ->
 	L2.
 
 sort1(L) ->
-	sort1(L, []).
-sort1([A, B | C], D) when A > B ->
-	sort1([A | C], [B | D]);
-sort1([A, B | C], D) ->
-	sort1([B | C], [A| D]);
-sort1([A], B) ->
-	sort1([], [A | B]);
-sort1([], A) ->
-	reverseList(A).
-
-%sort1([A, B], S) ->
-%	if
-%		A > B -> sort1([], [B, A | S]);
-%		true -> sort1([], [A, B | S])
-%	end;
-%sort1([A], [B | C]) ->
-%	if
-%		A > B -> sort1([], [B, A | C]);
-%		true -> sort1([], [A, B | C])
-% 	end;
-%sort1([A, B | C], D) ->
-%	if
-%		A > B -> sort1(C, [B, A | D]);
-%		true -> sort1(C, [A, B | D])
-%	end;
-%sort1([A | B], [C | D]) ->
-%	if
-%		A > C -> sort1(B, [C, A | D]);
-%		true -> sort1(B, [A, C | D])
-%	end;
-%sort1([], S) ->
-%	S.
-
-
-
-
-
-
-
-
-		  
-
-
-
-	
+	sort1(L, [], 0).
+sort1([A, B | C], D, S) when A > B ->
+	sort1([A | C], [B | D], S+1);
+sort1([A, B | C], D, S) ->
+	sort1([B | C], [A| D], S);
+sort1([A], B, S) ->
+	sort1([], [A | B], S);
+sort1([], A, S) ->
+	{S, reverseList(A)}.
