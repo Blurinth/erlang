@@ -7,7 +7,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([getDigitsX/1, getDigits/1, count/1, count/0, reverseList/1, sort1/1]).
+-export([getDigitsX/1, getDigits/1, count/1, count/0, reverseList/1, sort/1, sort1/1]).
 
 
 
@@ -45,13 +45,28 @@ reverseList([A | B], L2) ->
 reverseList([], L2) ->
 	L2.
 
-sort1(L) ->
-	sort1(L, [], 0).
-sort1([A, B | C], D, S) when A > B ->
-	sort1([A | C], [B | D], S+1);
-sort1([A, B | C], D, S) ->
-	sort1([B | C], [A| D], S);
-sort1([A], B, S) ->
-	sort1([], [A | B], S);
-sort1([], A, S) ->
-	{S, reverseList(A)}.
+sort1(In) ->
+	sort1(In, [], 0).
+sort1([Big, Small | Rest], Out, Swaps) when Big > Small ->
+	sort1([Big | Rest], [Small | Out], Swaps+1);
+sort1([Small, Big | Rest], Out, Swaps) ->
+	sort1([Big | Rest], [Small | Out], Swaps);
+sort1([Last], Out, Swaps) ->
+	sort1([], [Last | Out], Swaps);
+sort1([], Out, Swaps) ->
+	{Swaps, lists:reverse(Out)}.
+
+sort({Swaps, List}) when Swaps > 0 ->
+	sort(List);
+sort({Swaps, List}) ->
+	List;
+sort(List) ->
+	sort(sort1(List)).
+
+	
+
+
+
+
+
+
