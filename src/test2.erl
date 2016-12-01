@@ -52,7 +52,7 @@ sort({List, 0}, 1) ->
 	List.
 
 sort_test() ->
-	sort_test([[], [1],[2,1],[1,3,2]]).
+	sort_test([testlistgen()]).
 sort_test([A | Tests]) ->
 	Correct = lists:sort(A),
 	Correct = sort(A),
