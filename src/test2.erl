@@ -8,7 +8,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([sort/1, testlistgen/0, testgen/1, bettertestlistgen/1]).
+-export([sort/1, testlistgen/1]).
 
 
 
@@ -58,7 +58,7 @@ sort_test([A | Tests]) ->
 	sort_test(Tests);
 sort_test([]) ->
 	ok.
-%generates a list of lists with a random number(0-10) of random numbers(0-10)				
+%generates an N long list of lists with a random number(0-10) of random numbers(0-10)				
 testlistgen(N) ->
 	[[rand:uniform(11)-1 || _ <- lists:seq(0, rand:uniform(11)-2)] || _ <- lists:seq(1, N)].
 
