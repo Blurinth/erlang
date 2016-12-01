@@ -54,7 +54,7 @@ sort_test() ->
 sort_test([A | Tests]) ->
 	Correct = list:sort(A),
 	Correct = sort(A),
-	sort_test(Tests).
+	sort_test(Tests),
 sort_test([]) ->
 	ok.
 				
