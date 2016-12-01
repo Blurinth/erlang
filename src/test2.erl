@@ -3,11 +3,11 @@
 
 
 -module(test2).
-
+-include_lib("eunit/include/eunit.hrl").
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([sortbig/1, sortsmall/1, sort/1]).
+-export([sortbig/1, sortsmall/1, sort/1, test/0]).
 
 
 
@@ -47,13 +47,15 @@ sort({List, Swaps}, 2) when Swaps > 0->
 	sort(sortsmall(List), 1);
 sort({List, 0}, _) ->
 	List.
-
+		
+sort_test() ->
+	[] = sort([]),
+	[1] = sort([1]),
+	[1,2] = sort([2,1]),
+	[1,2,3] = sort([2,3,1]),
+	ok.
 				
-				
-				
-				
-				
-				
+		
 				
 				
 				
