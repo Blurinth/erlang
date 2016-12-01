@@ -8,7 +8,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([sort/1, testlistgen/0, testgen/1]).
+-export([sort/1, testlistgen/0, testgen/1, bettertestlistgen/1]).
 
 
 
@@ -27,7 +27,6 @@ sortbig([Last], Out, Swaps) ->
 	sortbig([], [Last | Out], Swaps);
 sortbig([], Out, Swaps) ->
 	{Out, Swaps}.
-
 %moves smallest right, reverses list
 sortsmall(In) ->
 	sortsmall(In, [], 0).
@@ -39,7 +38,7 @@ sortsmall([Last], Out, Swaps) ->
 	sortsmall([], [Last | Out], Swaps);
 sortsmall([], Out, Swaps) ->
 	{Out, Swaps}.
-
+%alternates sorting between small to right vs big to right, stops when list sorted
 sort(List) ->
 	sort(sortbig(List), 1).
 sort({List, Swaps}, 1) when Swaps > 0->
@@ -50,30 +49,18 @@ sort({List, 0}, 2) ->
 	sort(sortsmall(List), 1);
 sort({List, 0}, 1) ->
 	List.
-
+%unit test
 sort_test() ->
-	sort_test([testlistgen()]).
+	sort_test([testlistgen(20) | [[],[1],[2,1],[3,1,2]]]).
 sort_test([A | Tests]) ->
 	Correct = lists:sort(A),
 	Correct = sort(A),
 	sort_test(Tests);
 sort_test([]) ->
 	ok.
-				
-testlistgen() ->
-	testlistgen([], 1).
-testlistgen(Out, Tests) when Tests =< 20 ->
-	testlistgen([testgen(rand:uniform(11)-1) | Out], Tests + 1);
-testlistgen(Out, _) ->
-	Out.
-testgen(Max_size) ->
-	testgen([], Max_size - 1, 0).
-testgen(Out, Max_size, _) when Max_size == 0 ->
-	Out;
-testgen(Out, Max_size, Current_size) when Current_size =< Max_size ->
-	testgen([rand:uniform(11)-1 | Out], Max_size, Current_size + 1);
-testgen(Out, _, _) ->
-	Out.
+%generates a list of lists with a random number(0-10) of random numbers(0-10)				
+testlistgen(N) ->
+	[[rand:uniform(11)-1 || _ <- lists:seq(0, rand:uniform(11)-2)] || _ <- lists:seq(1, N)].
 
 
 
