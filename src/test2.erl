@@ -8,7 +8,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([sort/1, testlistgen/1]).
+-export([sort/1, testlistgen/1, editlist/2]).
 
 
 
@@ -61,8 +61,10 @@ sort_test([]) ->
 %generates an N long list of lists with a random number(0-10) of random numbers(0-10)				
 testlistgen(N) ->
 	[[rand:uniform(11)-1 || _ <- lists:seq(0, rand:uniform(11)-2)] || _ <- lists:seq(1, N)].
-
-
+%applies Function on all the items in List
+editlist(Function, List) ->
+	[Function(A) || A <- List].
+	
 
 
 
