@@ -70,11 +70,12 @@ editlist2(Function1, Function2, List) ->
 editlist2(F1, F2, [L | Ls], Out) ->
 	case F2(L) of
 		true -> editlist2(F1, F2, Ls, [F1(L) | Out]);
-		false -> editlist2(F1, F2, Ls, [L | Out])
+		false -> editlist2(F1, F2, Ls, Out)
 	end;
 editlist2(_, _, [], Out) ->
 	lists:reverse(Out).
 
+	
 
 
 
