@@ -8,7 +8,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([sort/1, testlistgen/1, editlist/2]).
+-export([sort/1, testlistgen/1, editlist/2, editlist2/3]).
 
 
 
@@ -64,7 +64,16 @@ testlistgen(N) ->
 %applies Function on all the items in List
 editlist(Function, List) ->
 	[Function(A) || A <- List].
-	
+%Applies Function1 to item in List if Function2 returns true for that item
+editlist2(Function1, Function2, List) -> 
+	editlist2(Function1, Function2, List, []).
+editlist2(F1, F2, [L | Ls], Out) ->
+	case F2(L) of
+		true -> editlist2(F1, F2, Ls, [F1(L) | Out]);
+		false -> editlist2(F1, F2, Ls, [L | Out])
+	end;
+editlist2(_, _, [], Out) ->
+	lists:reverse(Out).
 
 
 
