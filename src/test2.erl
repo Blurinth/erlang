@@ -8,7 +8,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([sort/1, testlistgen/1, editlist/2, editlist2/3]).
+-export([sort/1, testlistgen/1, editlist/2, editlist2/3, mergelists/3]).
 
 
 
@@ -74,7 +74,20 @@ editlist2(F1, F2, [L | Ls], Out) ->
 	end;
 editlist2(_, _, [], Out) ->
 	lists:reverse(Out).
-
+%merge two lists sorted by a function
+mergelists(L1, L2, Function) ->
+	mergelists(L1, L2, Function, []).
+mergelists([A | As], [B | Bs], F, Out) ->
+	case F(A, B) of
+		A -> mergelists([As], [B | Bs], F, [A | Out]);
+		B -> mergelists([A | As], [Bs], F, [B | Out])
+	end;
+mergelists([], [B], F, Out) ->
+	mergelists([], [], F, [B | Out]);
+mergelists([A], [], F, Out) ->
+	mergelists([], [], F, [A | Out]);
+mergelists([], [], _, Out) ->
+	lists:reverse(Out).
 	
 
 
