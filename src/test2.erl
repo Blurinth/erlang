@@ -77,19 +77,17 @@ editlist2(_, _, [], Out) ->
 %merge two lists sorted by a function
 mergelists(L1, L2, Function) ->
 	mergelists(L1, L2, Function, []).
+mergelists([], [], _, Out) ->
+	lists:reverse(Out);
+mergelists([], [B | Bs], F, Out) ->
+	mergelists([], Bs, F, [B | Out]);
+mergelists([A | As], [], F, Out) ->
+	mergelists(As, [], F, [A | Out]);
 mergelists([A | As], [B | Bs], F, Out) ->
 	case F(A, B) of
-		A -> mergelists([As], [B | Bs], F, [A | Out]);
-		B -> mergelists([A | As], [Bs], F, [B | Out])
-	end;
-mergelists([], [B], F, Out) ->
-	mergelists([], [], F, [B | Out]);
-mergelists([A], [], F, Out) ->
-	mergelists([], [], F, [A | Out]);
-mergelists([], [], _, Out) ->
-	lists:reverse(Out).
-	
-
+		A -> mergelists(As, [B | Bs], F, [A | Out]);
+		B -> mergelists([A | As], Bs, F, [B | Out])
+	end.
 
 
 				
