@@ -8,7 +8,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([sort/1, testlistgen/1, editlist/2, editlist2/3, mergelists/3]).
+-export([sort/1, testlistgen/1, editlist/2, editlist2/3, mergelists/3, split/1, mergesort/1, split_thing/1]).
 
 
 
@@ -75,6 +75,8 @@ editlist2(F1, F2, [L | Ls], Out) ->
 editlist2(_, _, [], Out) ->
 	lists:reverse(Out).
 %merge two lists sorted by a function
+mergelists(L1, L2) ->
+	mergelists(L1, L2, fun(A, B) -> A<B end).
 mergelists(L1, L2, Function) ->
 	mergelists(L1, L2, Function, []).
 mergelists([], [], _, Out) ->
@@ -85,10 +87,39 @@ mergelists([A | As], [], F, Out) ->
 	mergelists(As, [], F, [A | Out]);
 mergelists([A | As], [B | Bs], F, Out) ->
 	case F(A, B) of
-		A -> mergelists(As, [B | Bs], F, [A | Out]);
-		B -> mergelists([A | As], Bs, F, [B | Out])
+		true -> mergelists(As, [B | Bs], F, [A | Out]);
+		false -> mergelists([A | As], Bs, F, [B | Out])
 	end.
 
+mergesort(List) ->
+	mergesort(List, []);
+mergesort([]) ->
+	[];
+mergesort([A | []]) ->
+	[A].
+mergesort(L1, L2) ->
+	mergesort(L1, L2);
+mergesort([A | []], [B | []]) ->
+	mergelists([A], [B]);
+mergesort([A | []], L2) ->
+	ok.
+split(List) ->
+	split(List, length(List) div 2).
+split(Out, 0) ->
+	Out;
+split([_ | Ls], Length) ->
+	split(Ls, Length -1).
+
+split_test(List) ->
+	split_test(List, []).
+split_test([], Out) ->
+	Out;
+split_test([A | []], Out) ->
+	split_test([[], [A | Out]]);
+split_test(L, Out) ->
+	ok.
+split_thing(List) ->
+	mergelists(lists:sort(split(List)), lists:sort(lists:reverse(split(lists:reverse(List))))).
 
 				
 				
