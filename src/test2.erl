@@ -8,7 +8,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([sort/1, testlistgen/1, editlist/2, editlist2/3, mergelists/3, split/1, mergesort/1, mergesort/2]).
+-export([sort/1, testlistgen/1, editlist/2, editlist2/3, mergelists/3, split/1, mergesort/1, mergesort/2, quicksort/1, quicksort2/1]).
 
 
 
@@ -98,14 +98,6 @@ split(Out, 0) ->
 split([_ | Ls], Length) ->
 	split(Ls, Length -1).
 
-split_test(List) ->
-	split_test(List, []).
-split_test([], Out) ->
-	Out;
-split_test([A | []], Out) ->
-	split_test([[], [A | Out]]);
-split_test(L, Out) ->
-	ok.
 mergesort(List) ->
 	put(count, 0),
 	mergesort(List, fun(A, B) -> put(count, get(count) + 1), A<B end).
@@ -114,7 +106,46 @@ mergesort([], Fun) ->
 mergesort([A], Fun) ->
 	[A];
 mergesort(List, Fun) ->
-	mergelists(mergesort(split(List)), mergesort(lists:reverse(split(lists:reverse(List)))), Fun).
+	mergelists(mergesort(split(List), Fun), mergesort(lists:reverse(split(lists:reverse(List))), Fun), Fun).
+
+
+
+quicksort([]) ->
+	[];
+quicksort([A]) ->
+	[A];
+quicksort(List) ->
+	[A | [B | _]] = quicksort2(List),
+	quicksort(A) ++ quicksort(B).
+quicksort2([]) ->
+	[[], []];
+quicksort2([A]) ->
+	[[A], []];
+quicksort2([A, B]) when A < B ->
+	[[A], [B]];
+quicksort2([A, B]) ->
+	[[B], [A]];
+quicksort2([Pivot | Rest]) ->
+	quicksort2(Pivot, Rest, [] ,[]).
+quicksort2(P, [L | Ls], Out1, Out2) when L < P ->
+	quicksort2(P, Ls, [L | Out1], Out2);
+quicksort2(P, [L | Ls], Out1, Out2) ->
+	quicksort2(P, Ls, Out1, [L | Out2]);
+quicksort2(P, [], Out1, Out2) ->
+  	[Out1, [P | Out2]].
+	
+
+
+
+
+
+
+
+
+
+
+
+
 
 				
 				
