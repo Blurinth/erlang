@@ -21,14 +21,14 @@ getstart(_, N) ->
 sqrt(Num) when Num == 0 ->
 	0;
 sqrt(Num) when Num < 0 ->
-	io:format("Number cannot be negative."),
-	ok;
+	erlang:error(badarith);
 sqrt(Num) ->
 	sqrt(Num, getstart(Num), Num).
 sqrt(Num, Place, Test) ->
 	io:format("~p, ~p~n", [Place, Test]),
+	A = Test - Place,
 	if
-		Test * Test =:= Num -> Test;
-		(Test - Place) * (Test - Place) < Num -> sqrt(Num, Place / 10, Test);
+		A =:= Test -> Test;
+		A * A < Num -> sqrt(Num, Place / 10, Test);
 		true -> sqrt(Num, Place, Test - Place)
 	end.
