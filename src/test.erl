@@ -7,7 +7,7 @@
 %% ====================================================================
 %% API functions
 %% ====================================================================
--export([getDigitsX/1, getDigits/1, count/1, count/0, reverseList/1, sort/1, sort1/1]).
+-export([getDigitsX/1, getDigits/1, count/1, count/0, reverseList/1, sort/1, bettersort/1]).
 
 
 
@@ -19,7 +19,7 @@ getDigitsX(N) when N > 10 ->
 	io:format("~p ~n", [N rem 10]),
 	test:getDigitsX(N div 10);
 getDigitsX(N) ->
-	io:format("~p ~n", [N]).
+	N.
 
 count(0) -> 
 	ok;
@@ -45,28 +45,47 @@ reverseList([A | B], L2) ->
 reverseList([], L2) ->
 	L2.
 
-sort1(In) ->
-	sort1(In, [], 0).
-sort1([Big, Small | Rest], Out, Swaps) when Big > Small ->
-	sort1([Big | Rest], [Small | Out], Swaps+1);
-sort1([Small, Big | Rest], Out, Swaps) ->
-	sort1([Big | Rest], [Small | Out], Swaps);
-sort1([Last], Out, Swaps) ->
-	sort1([], [Last | Out], Swaps);
-sort1([], Out, Swaps) ->
-	{Swaps, lists:reverse(Out)}.
+swaps(In) ->
+	swaps(In, [], 0).
+swaps([Big, Small | Rest], Out, Swaps) when Big > Small ->
+	swaps([Big | Rest], [Small | Out], Swaps+1);
+swaps([Small, Big | Rest], Out, Swaps) ->
+	swaps([Big | Rest], [Small | Out], Swaps);
+swaps([Last], Out, Swaps) ->
+	swaps([], [Last | Out], Swaps);
+swaps([], Out, Swaps) ->
+	{Swaps, Out}.
 
 sort({Swaps, List}) when Swaps > 0 ->
 	sort(List);
 sort({Swaps, List}) ->
 	List;
 sort(List) ->
-	sort(sort1(List)).
+	sort(swaps(List)).
 
-	
+swapb(In) ->
+	swapb(In, [], 0).
+swapb([Small, Big | Rest], Out, Swaps) when Small < Big ->
+	swapb([Small | Rest], [Big | Out], Swaps+1);
+swapb([Big, Small | Rest], Out, Swaps) ->
+	swapb([Big | Rest], [Small | Out], Swaps);
+swapb([Last], Out, Swaps) ->
+	swapb([], [Last | Out], Swaps);
+swapb([], Out, Swaps) ->
+	{Swaps, Out}.
 
 
+bettersort({Swaps, In}) when Swaps > 0 ->
+	bettersort2(swapb(In));
+bettersort({Swaps, In}) ->
+	In;
+bettersort(In) ->
+	bettersort2(swapb(In)).
 
-
-
+bettersort2({Swaps, In}) when Swaps > 0 ->
+	bettersort(swaps(In));
+bettersort2({Swaps, In}) ->
+	In;
+bettersort2(In) ->
+	bettersort(swaps(In)).
 
