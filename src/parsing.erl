@@ -13,6 +13,8 @@ get_number([L | Ls] = List, Out) ->
 		L == $. -> get_number_float(Ls, [L | Out]);
 		true -> {list_to_integer(lists:reverse(Out)), List}
 	end.
+get_number_float([], Out) ->
+	{lists:reverse(Out), []};
 get_number_float([L | Ls] = List, Out) ->
 	if
 		(L >= $0) and (L =< $9) -> get_number_float(Ls, [L | Out]);
