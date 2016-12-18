@@ -28,14 +28,6 @@ get_operator([L | Ls]) ->
 		L == $* -> {'*', Ls};
 		L == $/ -> {'/', Ls};
 		true -> erlang:error(badargs)
-	end;
-get_operator(L) ->
-	if
-		L == $+ -> {'+', []};
-		L == $- -> {'-', []};
-		L == $* -> {'*', []};
-		L == $/ -> {'/', []};
-		true -> erlang:error(badargs)
 	end.
 main(String) ->
 	main(String, []).
