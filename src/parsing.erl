@@ -27,33 +27,18 @@ get_operator([L | Ls]) ->
 		L == $- -> {'-', Ls};
 		L == $* -> {'*', Ls};
 		L == $/ -> {'/', Ls};
-		L == $( -> {'(', Ls};
-		L == $) -> {')', Ls};
 		true -> erlang:error(badarg)
 	end.
 get_parentheses(List) ->
-	get_parentheses(List, []).
-get_parentheses([], _) ->
+	get_parentheses(List, [], 0).
+get_parentheses([], _, _) ->
 	erlang:error(badarg);
-get_parentheses([L | Ls], Out) ->
-	io:format("parent~n"),
+get_parentheses([L | Ls], Out, N) ->
 	if
-		L == $( -> 
-			{A, B} = get_parentheses_nested(Ls, []),
-			get_parentheses(A, [B | Out]);
+		L == $( -> get_parentheses(Ls, [L | Out], N + 1);
+		(L == $)) and (N > 0) -> get_parentheses(Ls, [L | Out], N - 1);
 		L == $) -> {{'()', main(lists:reverse(Out))}, Ls};
-		true -> get_parentheses(Ls, [L | Out])
-	end.
-get_parentheses_nested([], _) ->
-	erlang:error(badarg);
-get_parentheses_nested([L | Ls], Out) ->
-	io:format("nest~n"),
-	if
-		L == $( ->
-			{A, B} = get_parentheses_nested(Ls, []),
-			get_parentheses_nested(A, [{'()', B} | Out]);
-		L == $) -> {Ls, {'()', main(lists:reverse(Out))}};
-		true -> get_parentheses_nested(Ls, [L | Out])
+		true -> get_parentheses(Ls, [L | Out], N)
 	end.
 main(String) ->
 	main(String, []).
@@ -70,8 +55,13 @@ main([L | Ls] = List, Out) ->
 				error:badarg -> main(Ls, Out)
 			end;
 		L == $( ->
-			{A, B} = get_parentheses(Ls),
-			main(B, [A | Out]);
+			try get_parentheses(Ls) of
+				_ ->
+					{A, B} = get_parentheses(Ls),
+					main(B, [A | Out])
+			catch
+				error:badarg -> io:format("error in your parentheses~n")
+			end;
 		L == $ -> main(Ls, Out);
 		true ->
 			try get_operator(List) of
