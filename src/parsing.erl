@@ -87,27 +87,28 @@ main_test() ->
 	?assertExit(badparens, main("((4*(5)+6")).
 	
 
-stackcalc(Instr) ->
-	io:format("start"),
-	stackcalc(Instr, [], 0).
-stackcalc([], [A], _) ->
+stackcalc(List) ->
+	io:format("start~n"),
+	stackcalc(List, []).
+stackcalc([], [A]) ->
 	A;
-stackcalc([I | Is], Stack, N) ->
+stackcalc([I | Is], [A, B | Ss] = Stack) ->
 	if
-		(I >= $0) and (I =< $9) ->
+		is_integer(I) -> stackcalc(Is, [I | Stack]);
+		true ->
 			if
-				N =< 2 -> erlang:error(badarg);
-				N < 2 -> stackcalc(Is, [I | Stack], N + 1)
-			end;
-		N == 2 ->
-			[A, B] = Stack,
-			if
-				I == $+ -> stackcalc(Is, [B + A], 1);
-				I == $- -> stackcalc(Is, [B - A], 1);
-				I == $* -> stackcalc(Is, [B * A], 1);
-				I == $/ -> stackcalc(Is, [B / A], 1)
+				I == $+ -> stackcalc(Is, [B + A | Ss]);
+				I == $- -> stackcalc(Is, [B - A | Ss]);
+				I == $* -> stackcalc(Is, [B * A | Ss]);
+				I == $/ -> stackcalc(Is, [B / A | Ss])
 			end
+	end;
+stackcalc([I | Is], [S]) ->
+	if
+		is_integer(I) -> stackcalc(Is, [I, S]);
+		true -> erlang:error(badarg)
 	end.
+
 		
 
 
