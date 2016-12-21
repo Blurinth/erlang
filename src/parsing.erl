@@ -87,27 +87,28 @@ main_test() ->
 	?assertExit(badparens, main("((4*(5)+6")).
 	
 
-stackcalc(List) ->
-	io:format("start~n"),
-	stackcalc(List, []).
+stackcalc(Instr) ->
+	stackcalc(Instr, []).
+stackcalc([I | Is], []) when is_integer(I) ->
+	stackcalc(Is, [I]);
+stackcalc([_ | _], []) ->
+	erlang:error(badarg);
+stackcalc([I | Is], [A]) when is_integer(I) ->
+	stackcalc(Is, [I, A]);
+stackcalc([_ | _], [_]) ->
+	erlang:error(badarg);
+stackcalc([I | Is], Stack) when is_integer(I) ->
+	stackcalc(Is, [I | Stack]);
+stackcalc([I | Is], [A, B | C]) when I == '+' ->
+	stackcalc(Is, [B + A | C]);
+stackcalc([I | Is], [A, B | C]) when I == '-' ->
+	stackcalc(Is, [B - A | C]);
+stackcalc([I | Is], [A, B | C]) when I == '*' ->
+	stackcalc(Is, [B * A | C]);
+stackcalc([I | Is], [A, B | C]) when I == '/' ->
+	stackcalc(Is, [B / A | C]);
 stackcalc([], [A]) ->
-	A;
-stackcalc([I | Is], [A, B | Ss] = Stack) ->
-	if
-		is_integer(I) -> stackcalc(Is, [I | Stack]);
-		true ->
-			if
-				I == $+ -> stackcalc(Is, [B + A | Ss]);
-				I == $- -> stackcalc(Is, [B - A | Ss]);
-				I == $* -> stackcalc(Is, [B * A | Ss]);
-				I == $/ -> stackcalc(Is, [B / A | Ss])
-			end
-	end;
-stackcalc([I | Is], [S]) ->
-	if
-		is_integer(I) -> stackcalc(Is, [I, S]);
-		true -> erlang:error(badarg)
-	end.
+	A.
 
 		
 
