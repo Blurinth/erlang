@@ -1,6 +1,6 @@
 %% @author Quinn
 -module(parsing).
--export([get_number/1, get_operator/1, main/1]).
+-export([main/1, stackcalc/1]).
 -include_lib("eunit/include/eunit.hrl").
 
 get_number(String) ->
@@ -52,7 +52,7 @@ main([L | Ls] = List, Out) ->
 					{A, B} = get_number(List),
 					main(B, [A | Out])
 			catch
-				error:badarg -> main(Ls, Out)
+				error:badarg -> exit(baddeci)
 			end;
 		L == $( ->
 			try get_parentheses(Ls) of
@@ -60,7 +60,7 @@ main([L | Ls] = List, Out) ->
 					{A, B} = get_parentheses(Ls),
 					main(B, [A | Out])
 			catch
-				error:badarg -> io:format("error in your parentheses~n")
+				error:badarg -> exit(badparens)
 			end;
 		L == $ -> main(Ls, Out);
 		true ->
@@ -69,21 +69,46 @@ main([L | Ls] = List, Out) ->
 					{A, B} = get_operator(List),
 					main(B, [A | Out])
 			catch
-				error:badarg -> main(Ls, Out)
+				error:badarg -> exit(badsymbol)
 			end
 	end.
-
 main_test() ->
-[1,'+',2] = main("1+2"),
-[0.45,'/',6.5] = main("0.45/6.5"),
-[0,'*',1.567] = main("0*1.567"),
-[5,'-',0] = main("5-0"),
-[5,'*',{'()',[6,'+',7]},'/',8] = main("5*(6+7)/8"),
-[4,'*',{'()',[5,'-',{'()',[7,'/',8]}]}] = main("4*(5-(7/8))"),
-[5,'*',{'()',[6,'/',4]},'+',{'()',[3,'*',4]}] = main("5*(6/4)+(3*4)"),
-[1,'+',{'()',[2,'*',{'()',[4,'/',{'()',[5,'-',6]},'+',7]},'*',8]},'/',9] = main("1+(2*(4/(5-6)+7)*8)/9").
+	[1,'+',2] = main("1+2"),
+	[0.45,'/',6.5] = main("0.45/6.5"),
+	[0,'*',1.567] = main("0*1.567"),
+	[5,'-',0] = main("5-0"),
+	[5,'*',{'()',[6,'+',7]},'/',8] = main("5*(6+7)/8"),
+	[4,'*',{'()',[5,'-',{'()',[7,'/',8]}]}] = main("4*(5-(7/8))"),
+	[5,'*',{'()',[6,'/',4]},'+',{'()',[3,'*',4]}] = main("5*(6/4)+(3*4)"),
+	[1,'+',{'()',[2,'*',{'()',[4,'/',{'()',[5,'-',6]},'+',7]},'*',8]},'/',9] = main("1+(2*(4/(5-6)+7)*8)/9"),
+	?assertExit(badparens, main("(4+(3)")),
+	?assertExit(badsymbol, main("5+b6")),
+	?assertExit(baddeci, main("4.00.3 + 6.4")),
+	?assertExit(badparens, main("((4*(5)+6")).
+	
 
-
+stackcalc(Instr) ->
+	io:format("start"),
+	stackcalc(Instr, [], 0).
+stackcalc([], [A], _) ->
+	A;
+stackcalc([I | Is], Stack, N) ->
+	if
+		(I >= $0) and (I =< $9) ->
+			if
+				N =< 2 -> erlang:error(badarg);
+				N < 2 -> stackcalc(Is, [I | Stack], N + 1)
+			end;
+		N == 2 ->
+			[A, B] = Stack,
+			if
+				I == $+ -> stackcalc(Is, [B + A], 1);
+				I == $- -> stackcalc(Is, [B - A], 1);
+				I == $* -> stackcalc(Is, [B * A], 1);
+				I == $/ -> stackcalc(Is, [B / A], 1)
+			end
+	end.
+		
 
 
 
