@@ -43,7 +43,7 @@ get_parentheses([L | Ls], Out, N) ->
 parse(String) ->
 	parse(String, []).
 parse([], Out) ->
-	lists:reverse(Out);
+	parse2(lists:reverse(Out));
 parse([L | Ls] = List, Out) ->
 	if
 		(L >= $0) and (L =< $9) ->
@@ -100,41 +100,13 @@ stackcalc([I | Is], Stack) ->
 	stackcalc(Is, [I | Stack]);
 stackcalc([], [A]) ->
 	A.
-parse2(String) ->
-	parse2b(parse(String)).
-parse2b([L1, L2 | Ls]) ->
-	if
-		is_integer(L1) or is_float(L1) ->
-			if
-				L2 == '+' -> {'+', L1, parse2b(Ls)};
-				L2 == '-' -> {'-', L1, parse2b(Ls)};
-				L2 == '*' -> {'*', L1, parse2b(Ls)};
-				L2 == '/' -> {'/', L1, parse2b(Ls)}
-			end;
-		is_tuple(L1) ->
-			{_, A} = L1,
-			if
-				L2 == '+' -> {'()', [{'+', parse2b(A), parse2b(Ls)}]};
-				L2 == '-' -> {'()', [{'-', parse2b(A), parse2b(Ls)}]};
-				L2 == '*' -> {'()', [{'*', parse2b(A), parse2b(Ls)}]};
-				L2 == '/' -> {'()', [{'/', parse2b(A), parse2b(Ls)}]}
-			end
-	end;
-parse2b([L]) ->
+
+parse2([L1, '*', L2 | Ls]) -> 
+	{'*', parse2(L1), parse2(L2)};
+parse2([L1, '/', L2 | Ls]) -> 
+	{'/', parse2(L1), parse2(L2)};
+parse2(L) -> 
 	L.
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
