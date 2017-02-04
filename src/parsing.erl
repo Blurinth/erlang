@@ -101,12 +101,31 @@ stackcalc([I | Is], Stack) ->
 stackcalc([], [A]) ->
 	A.
 
-parse2([L1, '*', L2 | Ls]) -> 
-	{'*', parse2(L1), parse2(L2)};
-parse2([L1, '/', L2 | Ls]) -> 
-	{'/', parse2(L1), parse2(L2)};
+parse2([L, '*' | Ls]) -> 
+	{'*', parse2(L), parse2(Ls)};
+parse2([L, '/' | Ls]) -> 
+	{'/', parse2(L), parse2(Ls)};
+parse2([L]) ->
+	L;
 parse2(L) -> 
 	L.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
